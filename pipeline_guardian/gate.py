@@ -6,16 +6,20 @@ last check. If a gate fails, the proposed remediation must NOT be applied.
 
 from __future__ import annotations
 
+from typing import Any
+
 import asyncpg
 
 from pipeline_guardian.types import GateResult, ProposedRemediation
 
 
-async def _gate_prune_orphaned(pool: asyncpg.Pool, args: dict) -> GateResult:
+async def _gate_prune_orphaned(pool: asyncpg.Pool, args: dict[str, Any]) -> GateResult:
     run_id = args.get("run_id")
     expected = args.get("expected_count")
     if not isinstance(run_id, int) or not isinstance(expected, int):
-        return GateResult(passed=False, reason="invalid args: run_id and expected_count must be int")
+        return GateResult(
+            passed=False, reason="invalid args: run_id and expected_count must be int"
+        )
 
     async with pool.acquire() as conn:
         status = await conn.fetchval("select status from pipeline.runs where id=$1", run_id)
@@ -38,7 +42,7 @@ async def _gate_prune_orphaned(pool: asyncpg.Pool, args: dict) -> GateResult:
     return GateResult(passed=True, reason="ok")
 
 
-async def _gate_clear_stale_lock(pool: asyncpg.Pool, args: dict) -> GateResult:
+async def _gate_clear_stale_lock(pool: asyncpg.Pool, args: dict[str, Any]) -> GateResult:
     lock_id = args.get("lock_id")
     if not isinstance(lock_id, int):
         return GateResult(passed=False, reason="invalid args: lock_id must be int")
@@ -57,13 +61,11 @@ async def _gate_clear_stale_lock(pool: asyncpg.Pool, args: dict) -> GateResult:
     return GateResult(passed=True, reason="ok")
 
 
-async def _gate_reset_watermark(pool: asyncpg.Pool, args: dict) -> GateResult:
+async def _gate_reset_watermark(pool: asyncpg.Pool, args: dict[str, Any]) -> GateResult:
     stream = args.get("stream_name")
     to_value = args.get("to_value")
     if not isinstance(stream, str) or not isinstance(to_value, str):
-        return GateResult(
-            passed=False, reason="invalid args: stream_name and to_value must be str"
-        )
+        return GateResult(passed=False, reason="invalid args: stream_name and to_value must be str")
 
     async with pool.acquire() as conn:
         row = await conn.fetchrow(

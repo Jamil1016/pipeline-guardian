@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import sys
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -41,7 +42,8 @@ def build_parser() -> argparse.ArgumentParser:
     apply_p = sub.add_parser("apply", help="Gate + (optionally) apply a remediation")
     apply_p.add_argument("--failure-id", type=int, required=True)
     apply_p.add_argument(
-        "--apply", action="store_true",
+        "--apply",
+        action="store_true",
         help="Actually mutate. WITHOUT this flag, runs in dry-run mode (default).",
     )
 
@@ -63,6 +65,7 @@ async def _init_db() -> int:
 async def _seed(mode: str) -> int:
     pool = await create_pool()
     try:
+        ctx: dict[str, Any]
         if mode == "orphaned":
             ctx = await seed_orphaned_baseline(pool)
         elif mode == "stuck-lock":

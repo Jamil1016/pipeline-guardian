@@ -73,7 +73,7 @@ async def _call_claude(failure: DetectedFailure, api_key: str) -> ProposedRemedi
         f"{json.dumps(failure.signature, indent=2)}\n\n"
         "Pick the correct remediation."
     )
-    response = await client.messages.create(
+    response = await client.messages.create(  # type: ignore[call-overload]
         model="claude-haiku-4-5-20251001",
         max_tokens=512,
         system=system_prompt,
@@ -84,8 +84,8 @@ async def _call_claude(failure: DetectedFailure, api_key: str) -> ProposedRemedi
     for block in response.content:
         if block.type == "tool_use":
             return ProposedRemediation(
-                tool_name=block.name,  # type: ignore[arg-type]
-                tool_input=dict(block.input),  # type: ignore[arg-type]
+                tool_name=block.name,
+                tool_input=dict(block.input),
             )
     raise RuntimeError("Claude did not return a tool_use block")
 

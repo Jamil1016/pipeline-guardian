@@ -2,26 +2,24 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import asyncpg
 
 from pipeline_guardian.types import ProposedRemediation
 
 
-async def _apply_prune_orphaned(pool: asyncpg.Pool, args: dict) -> None:
+async def _apply_prune_orphaned(pool: asyncpg.Pool, args: dict[str, Any]) -> None:
     async with pool.acquire() as conn:
-        await conn.execute(
-            "delete from stg_events where pipeline_run_id=$1", args["run_id"]
-        )
+        await conn.execute("delete from stg_events where pipeline_run_id=$1", args["run_id"])
 
 
-async def _apply_clear_stale_lock(pool: asyncpg.Pool, args: dict) -> None:
+async def _apply_clear_stale_lock(pool: asyncpg.Pool, args: dict[str, Any]) -> None:
     async with pool.acquire() as conn:
-        await conn.execute(
-            "delete from pipeline.stuck_locks where lock_id=$1", args["lock_id"]
-        )
+        await conn.execute("delete from pipeline.stuck_locks where lock_id=$1", args["lock_id"])
 
 
-async def _apply_reset_watermark(pool: asyncpg.Pool, args: dict) -> None:
+async def _apply_reset_watermark(pool: asyncpg.Pool, args: dict[str, Any]) -> None:
     async with pool.acquire() as conn:
         await conn.execute(
             "update pipeline.watermarks set value=$2, updated_at=now() where stream_name=$1",
