@@ -28,7 +28,7 @@ async def seed_orphaned_baseline(pool: asyncpg.Pool) -> dict[str, int]:
             old + timedelta(minutes=5),
         )
 
-        rows = [(run_id, old + timedelta(seconds=i * 30), '{}') for i in range(100)]
+        rows = [(run_id, old + timedelta(seconds=i * 30), "{}") for i in range(100)]
         await conn.executemany(
             """
             insert into stg_events (pipeline_run_id, occurred_at, payload, created_at)

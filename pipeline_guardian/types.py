@@ -13,9 +13,9 @@ RemediationTool = Literal["prune_orphaned", "clear_stale_lock", "reset_watermark
 class DetectedFailure:
     """A single failure detected by the scanner."""
 
-    failure_id: int            # local ID assigned by detector for the CLI handle
+    failure_id: int  # local ID assigned by detector for the CLI handle
     kind: FailureKind
-    signature_hash: str        # 16-hex-char hash of the canonical signature
+    signature_hash: str  # 16-hex-char hash of the canonical signature
     signature: dict[str, Any]  # the actual signature payload, kind-specific
 
 
