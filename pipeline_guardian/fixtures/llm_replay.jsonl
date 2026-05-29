@@ -1,0 +1,3 @@
+{"kind":"orphaned_baseline","tool_name":"prune_orphaned","tool_input_template":{"run_id":"$run_id","expected_count":"$orphaned_count"}}
+{"kind":"stuck_advisory_lock","tool_name":"clear_stale_lock","tool_input_template":{"lock_id":"$lock_id"}}
+{"kind":"stale_watermark","tool_name":"reset_watermark","tool_input_template":{"stream_name":"$stream_name","to_value":"$source_latest"}}
